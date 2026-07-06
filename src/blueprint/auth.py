@@ -29,7 +29,7 @@ def login():
             return render_template('auth/login.html')
 
         session['user_id'] = user.id
-        return redirect(url_for('chat.index'))
+        return redirect(url_for('calendar_bp.index'))
 
     return render_template('auth/login.html')
 
@@ -43,14 +43,14 @@ def register():
         password_again = request.form.get('password_again', '')
 
         if not name or not email or not password:
-            return render_template('auth/register.html', message="Заполните все обязательные поля")
+            return render_template('auth/register.html', message='Заполните все обязательные поля')
         if password != password_again:
-            return render_template('auth/register.html', message="Пароли не совпадают")
+            return render_template('auth/register.html', message='Пароли не совпадают')
 
         db_sess = db_session.create_session()
         if db_sess.query(User).filter(User.email == email).first():
             db_sess.close()
-            return render_template('auth/register.html', message="Пользователь с таким email уже существует")
+            return render_template('auth/register.html', message='Пользователь с таким email уже существует')
 
         db_sess.execute(
             sa.insert(User).values(

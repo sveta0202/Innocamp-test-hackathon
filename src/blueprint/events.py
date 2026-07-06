@@ -46,12 +46,19 @@ def create():
             db_sess.close()
             return response
 
+        if end_at and end_at < start_at:
+            flash('Дата окончания не может быть раньше даты начала', 'danger')
+            users = db_sess.query(User).order_by(User.name).all()
+            response = render_template('events/create.html', users=users)
+            db_sess.close()
+            return response
+
         event = Event(
             title=title,
             description=description,
             start_at=start_at,
             end_at=end_at,
-            creator_id=current_user.id
+            creator_id=current_user.id,
         )
 
         event.members.append(current_user)
