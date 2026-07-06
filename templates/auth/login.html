@@ -1,45 +1,35 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
      <meta charset="UTF-8">
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>Вход — Adventicle</title>
-     <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+     <title>вход</title>
+     <link rel="stylesheet" href="login.css">
 </head>
 <body>
-     <!-- TODO: заменить на дизайн login.html, который пришлёт пользователь -->
+     <header class="logo">
+          <img src="images/logo.png" class="logoImage">
+          <span>Adventicle</span>
+     </header>
+
      <div class="main">
-          <div class="register_form">
-               <h3 class="title">Adventicle</h3>
-               <p>С возвращением на <br><slot>орбиту</slot></p>
+          <h3 class="title">вход</h3>
 
-               {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                         {% for category, msg in messages %}
-                              <p style="color:#f87171; font-size:16px;">{{ msg }}</p>
-                         {% endfor %}
-                    {% endif %}
-               {% endwith %}
-
-               <form method="POST" action="{{ url_for('auth.login') }}">
-                    <div class="field-group">
-                         <input type="email" name="email" placeholder="email" required>
-                    </div>
-
-                    <div class="field-group">
-                         <input type="password" name="password" placeholder="введите пароль" required>
-                    </div>
-
-                    <button class="registrButton" type="submit">войти</button>
-               </form>
+          <div class="field-group">
+               <input type="text" placeholder="ваше имя">
           </div>
 
-          <div class="decoration">
-               <div class="headerlogin">
-                    <h6 class="loginText">Ещё нет аккаунта?</h6>
-                    <a href="{{ url_for('auth.register') }}"><button type="button" class="loginButton">Регистрация</button></a>
-               </div>
+          <div class="field-group">
+               <input type="email" placeholder="email">
           </div>
+
+          <div class="field-group">
+               <input type="password" placeholder="введите пароль">
+          </div>
+
+
+               <button class="loginButton">войти</button>
      </div>
+
 </body>
 </html>
