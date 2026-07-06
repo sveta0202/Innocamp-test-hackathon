@@ -1,22 +1,21 @@
 import datetime
-
 import sqlalchemy
+import sqlalchemy.orm as orm
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from .db_session import SqlAlchemyBase
+from db_session import SqlAlchemyBase
 
 
 class User(SqlAlchemyBase):
     __tablename__ = 'users'
 
-    id = sqlalchemy.Column(sqlalchemy.Integer,
-                           primary_key=True, autoincrement=True)
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, autoincrement=True)
     name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    email = sqlalchemy.Column(sqlalchemy.String,
-                              index=True, unique=True, nullable=True)
+    email = sqlalchemy.Column(sqlalchemy.String, index=True, unique=True, nullable=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    created_date = sqlalchemy.Column(sqlalchemy.DateTime,
-                                     default=datetime.datetime.now)
+    created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
+
+    events = orm.relationship('Event', secondary='event_members', back_populates='members')
 
     def set_password(self, password):
         self.hashed_password = generate_password_hash(password)
@@ -25,4 +24,4 @@ class User(SqlAlchemyBase):
         return check_password_hash(self.hashed_password, password)
 
     def __repr__(self):
-        return f'<User> {self.id} {self.name} {self.email}'
+        return f'{self.id} {self.name} {self.email}'
