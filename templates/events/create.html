@@ -29,20 +29,36 @@
                 <input type="text" id="title" name="title" class="form-control" required>
             </div>
 
+            <div class="form-row" style="padding:0 25px;">
+                <div class="form-group" style="padding:0;">
+                    <label for="event_date">Дата *</label>
+                    <input type="date" id="event_date" name="event_date" class="form-control" required>
+                </div>
+                <div class="form-group" style="padding:0;">
+                    <label for="event_time">Время *</label>
+                    <input type="time" id="event_time" name="event_time" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Категория</label>
+                <select id="category" name="category" class="form-control">
+                    <option value="meeting">Встреча</option>
+                    <option value="personal">Личное</option>
+                    <option value="work">Работа</option>
+                    <option value="important">Важное</option>
+                    <option value="other" selected>Другое</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Место</label>
+                <input type="text" id="location" name="location" class="form-control" placeholder="Где будет проходить событие">
+            </div>
+
             <div class="form-group">
                 <label for="description">Описание</label>
                 <textarea id="description" name="description" class="form-control" rows="3"></textarea>
-            </div>
-
-            <div class="form-row" style="padding:0 25px;">
-                <div class="form-group" style="padding:0;">
-                    <label for="start_at">Начало *</label>
-                    <input type="datetime-local" id="start_at" name="start_at" class="form-control" required>
-                </div>
-                <div class="form-group" style="padding:0;">
-                    <label for="end_at">Окончание</label>
-                    <input type="datetime-local" id="end_at" name="end_at" class="form-control">
-                </div>
             </div>
 
             <div class="form-group">
@@ -52,6 +68,20 @@
                 {% if users %}
                     <small>Доступные пользователи: {{ users | map(attribute='email') | join(', ') }}</small>
                 {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="important">
+                    Важное событие
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="notify">
+                    Напомнить за 15 минут
+                </label>
             </div>
 
             <div class="btn-group">

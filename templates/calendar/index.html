@@ -27,36 +27,186 @@
             </div>
 
             <div class="nav-section">
-                <div class="nav-title">Меню</div>
                 <div class="nav-buttons">
-                    <a href="{{ url_for('events_bp.create') }}"><button class="nav-btn">➕ Новое событие</button></a>
                     <a href="{{ url_for('auth.logout') }}"><button class="nav-btn">🚪 Выйти</button></a>
                 </div>
+            </div>
+
+            <div class="voice-section">
+                <button class="voice-btn" id="voiceCommand" type="button">
+                    <span class="voice-icon">➕</span>
+                    <span class="voice-text">Добавить событие</span>
+                </button>
             </div>
         </div>
 
         <div class="main-content">
             <div class="calendar-header">
-                <div class="current-month">Мои события</div>
+                <div class="calendar-nav">
+                    <a href="{{ url_for('calendar_bp.index', year=prev_year, month=prev_month) }}">
+                        <button class="nav-arrow" type="button">‹</button>
+                    </a>
+                    <div class="current-month">{{ month_name }} {{ year }}</div>
+                    <a href="{{ url_for('calendar_bp.index', year=next_year, month=next_month) }}">
+                        <button class="nav-arrow" type="button">›</button>
+                    </a>
+                </div>
+
+                <div class="view-buttons">
+                    <button class="view-btn active" type="button">Месяц</button>
+                </div>
             </div>
 
+            <!-- Календарь -->
             <div class="calendar-container">
-                {% if events %}
-                    <div class="events-list">
-                        {% for event in events %}
-                            <div class="event-item {{ 'meeting' if event.creator_id == user.id else 'other' }}" style="display:block; margin-bottom:10px; padding:10px;">
-                                <strong>{{ event.title }}</strong><br>
-                                {{ event.start_at.strftime('%d.%m.%Y %H:%M') }}
-                                {% if event.end_at %} — {{ event.end_at.strftime('%d.%m.%Y %H:%M') }}{% endif %}
-                                {% if event.description %}<br><span>{{ event.description }}</span>{% endif %}
+                <div class="calendar-grid" id="calendarGrid">
+                    <div class="calendar-header-day">ПН</div>
+                    <div class="calendar-header-day">ВТ</div>
+                    <div class="calendar-header-day">СР</div>
+                    <div class="calendar-header-day">ЧТ</div>
+                    <div class="calendar-header-day">ПТ</div>
+                    <div class="calendar-header-day">СБ</div>
+                    <div class="calendar-header-day">ВС</div>
+
+                    {% for week in weeks %}
+                        {% for cell in week %}
+                            <div class="calendar-day {{ 'other-month' if not cell.in_month else '' }} {{ 'today' if cell.is_today else '' }}"
+                                 {% if cell.in_month %}data-date="{{ cell.date.isoformat() }}"{% endif %}>
+                                <div class="day-number">{{ cell.day }}</div>
+                                {% if cell.events %}
+                                    <div class="events-list">
+                                        {% for event in cell.events %}
+                                            <div class="event-item {{ event.category }}{{ ' important' if event.is_important and event.category != 'important' else '' }}"
+                                                 title="{{ event.start_at.strftime('%H:%M') }} {{ event.title }}{% if event.location %} · {{ event.location }}{% endif %}">
+                                                {{ event.start_at.strftime('%H:%M') }} {{ event.title }}
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
                             </div>
                         {% endfor %}
-                    </div>
-                {% else %}
-                    <p>У вас пока нет событий. <a href="{{ url_for('events_bp.create') }}">Создать первое</a></p>
-                {% endif %}
+                    {% endfor %}
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Модалка добавления события -->
+    <div class="modal" id="eventModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Добавить событие</h2>
+                <button class="close-modal" id="closeModal" type="button">×</button>
+            </div>
+            <form id="eventForm" method="POST" action="{{ url_for('events_bp.create') }}">
+                <div class="form-group">
+                    <label for="eventTitle">Название события</label>
+                    <input type="text" id="eventTitle" name="title" class="form-control" placeholder="Введите название события" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="eventDate">Дата</label>
+                        <input type="date" id="eventDate" name="event_date" class="form-control" value="{{ today.isoformat() }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="eventTime">Время</label>
+                        <input type="time" id="eventTime" name="event_time" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventCategory">Категория</label>
+                    <select id="eventCategory" name="category" class="form-control">
+                        <option value="meeting">Встреча</option>
+                        <option value="personal">Личное</option>
+                        <option value="work">Работа</option>
+                        <option value="important">Важное</option>
+                        <option value="other" selected>Другое</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventLocation">Место</label>
+                    <input type="text" id="eventLocation" name="location" class="form-control" placeholder="Где будет проходить событие">
+                </div>
+
+                <div class="form-group">
+                    <label for="eventDescription">Описание</label>
+                    <textarea id="eventDescription" name="description" class="form-control" rows="3" placeholder="Дополнительная информация о событии"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="eventMembers">Участники (email через запятую)</label>
+                    <input type="text" id="eventMembers" name="member_emails" class="form-control" placeholder="friend@example.com, colleague@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="important" id="eventImportant">
+                        Важное событие
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="notify" id="eventNotification">
+                        Напомнить за 15 минут
+                    </label>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" id="cancelEvent">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить событие</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Быстрое добавление -->
+    <div class="quick-add-panel" id="quickAddPanel">
+        <div class="quick-add-header">
+            <h3>Быстрое добавление</h3>
+            <button class="close-quick-add" id="closeQuickAdd" type="button">×</button>
+        </div>
+        <form method="POST" action="{{ url_for('events_bp.create') }}">
+            <input type="text" name="title" class="quick-input" placeholder="Введите название события..." required>
+            <input type="hidden" name="event_date" value="{{ today.isoformat() }}">
+            <input type="hidden" name="event_time" value="09:00">
+            <input type="hidden" name="category" value="other">
+            <button class="btn btn-primary" type="submit">Добавить</button>
+        </form>
+    </div>
+
+    <script>
+        const eventModal = document.getElementById('eventModal');
+        const quickAddPanel = document.getElementById('quickAddPanel');
+
+        document.getElementById('voiceCommand').addEventListener('click', () => {
+            eventModal.classList.add('active');
+        });
+        document.getElementById('closeModal').addEventListener('click', () => {
+            eventModal.classList.remove('active');
+        });
+        document.getElementById('cancelEvent').addEventListener('click', () => {
+            eventModal.classList.remove('active');
+        });
+        eventModal.addEventListener('click', (e) => {
+            if (e.target === eventModal) eventModal.classList.remove('active');
+        });
+
+        document.getElementById('closeQuickAdd').addEventListener('click', () => {
+            quickAddPanel.classList.remove('active');
+        });
+
+        // Клик по пустому дню открывает модалку с предзаполненной датой
+        document.querySelectorAll('.calendar-day[data-date]').forEach((cell) => {
+            cell.addEventListener('click', (e) => {
+                if (e.target.closest('.event-item')) return;
+                document.getElementById('eventDate').value = cell.dataset.date;
+                eventModal.classList.add('active');
+            });
+        });
+    </script>
 </body>
 </html>
