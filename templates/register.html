@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>регистрация</title>
+     <link rel="stylesheet" href="registr.css">
+</head>
+<body>
+     <div class="main">
+          <div class="register_form">
+               <h3 class="title">Adventicle</h3>
+               <p>Создайте аккаут и <br>
+                    откройте <slot>мир событий</slot> </p>
+
+
+               <div class="field-group">
+                    <input type="text" placeholder="ваше имя">
+               </div>
+
+               <div class="field-group">
+                    <input type="email" placeholder="email">
+               </div>
+
+               <div class="field-group">
+                    <input type="password" placeholder="введите пароль">
+               </div>
+
+               <div class="field-group">
+                    <input type="password" placeholder="повторите пароль">
+               </div>
+
+               <label class="checkbox">
+                    <input type="checkbox">
+                    <span > Я принимаю условия</span>
+               </label>
+
+               <button class="registrButton">зарегистрироваться</button>
+          </div>
+
+          <div class="decoration">
+               <div class="headerlogin">
+                    <h6 class="loginText">Уже есть аккаут?</h6>
+                    <button class="loginButton">Войти</button>
+               </div>
+               <img src="images/calendar_image.png" class="calendarImage">
+
+          </div>
+</body>
+</html>
