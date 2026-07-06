@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Регистрация — Adventicle</title>
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+</head>
+<body>
+     <div class="main">
+          <div class="register_form">
+               <h3 class="title">Adventicle</h3>
+               <p>Создайте аккаунт и <br>
+                    откройте <slot>мир событий</slot></p>
+
+               {% if message %}
+                    <p style="color:#f87171; font-size:16px;">{{ message }}</p>
+               {% endif %}
+               {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                         {% for category, msg in messages %}
+                              <p style="color:#f87171; font-size:16px;">{{ msg }}</p>
+                         {% endfor %}
+                    {% endif %}
+               {% endwith %}
+
+               <form method="POST" action="{{ url_for('auth.register') }}">
+                    <div class="field-group">
+                         <input type="text" name="name" placeholder="ваше имя" required>
+                    </div>
+
+                    <div class="field-group">
+                         <input type="email" name="email" placeholder="email" required>
+                    </div>
+
+                    <div class="field-group">
+                         <input type="password" name="password" placeholder="введите пароль" required>
+                    </div>
+
+                    <div class="field-group">
+                         <input type="password" name="password_again" placeholder="повторите пароль" required>
+                    </div>
+
+                    <label class="checkbox">
+                         <input type="checkbox" name="terms" required>
+                         <span> Я принимаю условия</span>
+                    </label>
+
+                    <button class="registrButton" type="submit">зарегистрироваться</button>
+               </form>
+          </div>
+
+          <div class="decoration">
+               <div class="headerlogin">
+                    <h6 class="loginText">Уже есть аккаунт?</h6>
+                    <a href="{{ url_for('auth.login') }}"><button type="button" class="loginButton">Войти</button></a>
+               </div>
+          </div>
+     </div>
+</body>
+</html>

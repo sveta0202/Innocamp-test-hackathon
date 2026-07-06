@@ -41,16 +41,19 @@ def register():
         email = request.form.get('email', '').strip()
         password = request.form.get('password', '')
         password_again = request.form.get('password_again', '')
+        terms_accepted = request.form.get('terms')
 
         if not name or not email or not password:
-            return render_template('auth/register.html', message='Заполните все обязательные поля')
+            return render_template('auth/register.html', message="Заполните все обязательные поля")
         if password != password_again:
-            return render_template('auth/register.html', message='Пароли не совпадают')
+            return render_template('auth/register.html', message="Пароли не совпадают")
+        if not terms_accepted:
+            return render_template('auth/register.html', message="Нужно принять условия использования")
 
         db_sess = db_session.create_session()
         if db_sess.query(User).filter(User.email == email).first():
             db_sess.close()
-            return render_template('auth/register.html', message='Пользователь с таким email уже существует')
+            return render_template('auth/register.html', message="Пользователь с таким email уже существует")
 
         db_sess.execute(
             sa.insert(User).values(

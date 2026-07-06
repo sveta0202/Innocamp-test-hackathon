@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мой календарь — Adventicle</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/user.css') }}">
+</head>
+<body>
+
+    <div class="messages-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, msg in messages %}
+                    <div class="message-item {{ 'success' if category == 'success' else 'error' }}">{{ msg }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="app-container">
+        <div class="sidebar">
+            <div class="user-info">
+                <div class="user-avatar">👤</div>
+                <div class="user-name">{{ user.name }}</div>
+                <div class="user-email">{{ user.email }}</div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-title">Меню</div>
+                <div class="nav-buttons">
+                    <a href="{{ url_for('events_bp.create') }}"><button class="nav-btn">➕ Новое событие</button></a>
+                    <a href="{{ url_for('auth.logout') }}"><button class="nav-btn">🚪 Выйти</button></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="calendar-header">
+                <div class="current-month">Мои события</div>
+            </div>
+
+            <div class="calendar-container">
+                {% if events %}
+                    <div class="events-list">
+                        {% for event in events %}
+                            <div class="event-item {{ 'meeting' if event.creator_id == user.id else 'other' }}" style="display:block; margin-bottom:10px; padding:10px;">
+                                <strong>{{ event.title }}</strong><br>
+                                {{ event.start_at.strftime('%d.%m.%Y %H:%M') }}
+                                {% if event.end_at %} — {{ event.end_at.strftime('%d.%m.%Y %H:%M') }}{% endif %}
+                                {% if event.description %}<br><span>{{ event.description }}</span>{% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p>У вас пока нет событий. <a href="{{ url_for('events_bp.create') }}">Создать первое</a></p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
