@@ -1,4 +1,5 @@
 from flask import Flask
+from data import __all_models
 from data.db_session import global_init
 from data.users import User
 from blueprint.auth import auth_bp
