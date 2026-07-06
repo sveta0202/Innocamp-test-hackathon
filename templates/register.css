@@ -23,7 +23,7 @@ body{
      display: flex;
 
      flex-direction:column;
-     width: 45%;
+     width: 55%;
      padding-top: 10px;
      padding-left: 40px;
      padding-bottom: 20px;
@@ -88,8 +88,12 @@ input:hover{
 }
 
 .decoration{
-     flex: 1;
-     background-color: #8B5CF6;
+     position:relative;
+
+     display:flex;
+     flex:1;
+     flex-direction: column;
+     overflow: hidden;
      background: linear-gradient(20deg, #8B5CF6, #1E293B);
 }
 
@@ -104,7 +108,7 @@ slot{
 
 .headerlogin{
      display: flex;
-     justify-content: end;
+     justify-content: flex-end;
      align-items: center;
      margin: 10px;
 }
@@ -125,13 +129,12 @@ slot{
 }
 
 .calendarImage{
-    position:absolute;
-    width:380px;
-    height:90px;
+     position:absolute;
+     right: 5%;
+     top: 20%;
 
-    background:#8B5CF6;
-    filter:blur(70px);
-
-    opacity:.35;
-    border-radius:50%;
+     width:100%;
+     height:auto;
+     
 }
+
