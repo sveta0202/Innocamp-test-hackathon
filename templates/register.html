@@ -1,50 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
      <meta charset="UTF-8">
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>регистрация</title>
-     <link rel="stylesheet" href="register.css">
+     <title>Регистрация</title>
+     <!-- Рекомендуется использовать url_for для подключения стилей во Flask -->
+     <link rel="stylesheet" href="{{ url_for('static', filename='register.css') }}">
 </head>
 <body>
      <div class="main">
-          <div class="register_form">
+          <!-- Обернули поля в тег form -->
+          <form class="register_form" method="POST">
                <h3 class="title">Adventicle</h3>
-               <p>Создайте аккаут и <br>
+               <p>Создайте аккаунт и <br>
                     откройте <slot>мир событий</slot> </p>
 
+               <!-- Блок вывода ошибки, если Flask передал message -->
+               {% if message %}
+                    <div class="error-message" style="color: red; margin-bottom: 15px;">
+                         {{ message }}
+                    </div>
+               {% endif %}
 
+               <!-- Добавлен атрибут name="name" -->
                <div class="field-group">
-                    <input type="text" placeholder="ваше имя">
+                    <input type="text" name="name" placeholder="ваше имя" required>
                </div>
 
+               <!-- Добавлен атрибут name="email" -->
                <div class="field-group">
-                    <input type="email" placeholder="email">
+                    <input type="email" name="email" placeholder="email" required>
                </div>
 
+               <!-- Добавлен атрибут name="password" -->
                <div class="field-group">
-                    <input type="password" placeholder="введите пароль">
+                    <input type="password" name="password" placeholder="введите пароль" required>
                </div>
 
+               <!-- Добавлен атрибут name="password_again" -->
                <div class="field-group">
-                    <input type="password" placeholder="повторите пароль">
+                    <input type="password" name="password_again" placeholder="повторите пароль" required>
                </div>
 
                <label class="checkbox">
-                    <input type="checkbox">
-                    <span > Я принимаю условия</span>
+                    <input type="checkbox" required>
+                    <span> Я принимаю условия</span>
                </label>
 
-               <button class="registrButton">зарегистрироваться</button>
-          </div>
+               <!-- type="submit" заставляет форму отправляться на сервер -->
+               <button type="submit" class="registrButton">зарегистрироваться</button>
+          </form>
 
           <div class="decoration">
                <div class="headerlogin">
-                    <h6 class="loginText">Уже есть аккаут?</h6>
-                    <button class="loginButton">Войти</button>
+                    <h6 class="loginText">Уже есть аккаунт?</h6>
+                    <!-- Ссылка на страницу логина с помощью url_for -->
+                    <a href="{{ url_for('auth.login') }}"><button class="loginButton">Войти</button></a>
                </div>
-               <img src="images/calendar_image.png" class="calendarImage">
-
+               <!-- Рекомендуется использовать url_for для картинок во Flask -->
+               <img src="{{ url_for('static', filename='images/calendar_image.png') }}" class="calendarImage">
           </div>
+     </div> <!-- Закрывающий тег для div.main, который отсутствовал -->
 </body>
 </html>
