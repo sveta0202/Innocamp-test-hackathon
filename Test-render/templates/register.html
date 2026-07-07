@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Регистрация</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/register.css') }}">
+</head>
+<body>
+  <main class="card">
+    <h1>Регистрация</h1>
+
+    <form id="registerForm">
+      <div class="row">
+        <div class="field">
+          <label for="first_name">Имя</label>
+          <input id="first_name" name="first_name" type="text" value="Иван" required>
+        </div>
+
+        <div class="field">
+          <label for="last_name">Фамилия</label>
+          <input id="last_name" name="last_name" type="text" value="Петров" required>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" value="ivan.petrov@example.com" required>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="password">Пароль</label>
+          <input id="password" name="password" type="password" value="StrongPass123" required>
+        </div>
+
+        <div class="field">
+          <label for="role">Роль</label>
+          <input id="role" name="role" type="text" value="student" required>
+        </div>
+      </div>
+
+      <button type="submit">Отправить регистрацию</button>
+    </form>
+
+    <section class="meta" id="jsonPreview">JSON preview</section>
+    <section class="result" id="resultBox">Ответ Flask/microservice</section>
+  </main>
+
+  <script>
+    const form = document.getElementById("registerForm");
+    const jsonPreview = document.getElementById("jsonPreview");
+    const resultBox = document.getElementById("resultBox");
+    const endpoint = "{{ url_for('collect_registration') }}";
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const registration = Object.fromEntries(new FormData(form).entries());
+      const payload = {
+        source: {
+          page: window.location.pathname,
+          title: document.title,
+          collected_at: new Date().toISOString()
+        },
+        registration
+      };
+
+      jsonPreview.textContent = JSON.stringify(payload, null, 2);
+      resultBox.classList.remove("error");
+      resultBox.textContent = "Отправка...";
+
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+        resultBox.textContent = JSON.stringify(data, null, 2);
+        resultBox.classList.toggle("error", !response.ok);
+      } catch (error) {
+        resultBox.classList.add("error");
+        resultBox.textContent = "Ошибка сети: " + error.message;
+      }
+    });
+  </script>
+</body>
+</html>
