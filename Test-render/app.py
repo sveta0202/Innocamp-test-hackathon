@@ -8,25 +8,9 @@ def index():
 @app.post("/collect-registration")
 def collect_registration():
     data = request.get_json(silent=True)
-    if not data:
-        return jsonify({
-            "ok": False,
-            "error": "Данные не получены (нет json body)"
-        }), 400
-
     registration = data.get("registration", {})
-    errors = {}
-
     email = registration.get("email", "")
     password = registration.get("password", "")
-
-    if errors:
-        return jsonify({
-            "ok": False,
-            "stage": "validation",
-            "errors": errors,
-            "received": data
-        }), 422
 
     normalized = {
         "event": "user_registration",
